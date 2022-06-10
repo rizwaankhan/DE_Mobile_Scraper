@@ -1,0 +1,106 @@
+{% extends 'BaseTemplate.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block title %}
+        <title>Category</title>
+    {% endblock title %}
+</head>
+{% block body %}
+    <!-- Begin Page Content -->
+    <div class="container">
+
+        <div style="margin-top: 7%" class="row">
+            <div class="col-xl-10 m-auto order-xl-1">
+                <div style="background-color: transparent" class="card shadow ">{% include 'message.html' %}
+                    <div style="background-color:#4e73df" class="card-header  border-0">
+                        <div class="row align-items-center">
+
+                            <div class="col-6">
+                                <h3 style="color: white" class="mb-0">Add Category</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form method="post" action="{% url 'category' %}">
+                                        {% csrf_token %}
+                                        <div class="form-group focused">
+                                            <label class="form-control-label" for="input-name">Category Name</label>
+                                            <input required type="text" id="input-name"
+                                                   class="form-control form-control-alternative"
+                                                   name="catname" placeholder="Enter Category">
+                                        </div>
+                                        <div class="form-group focused">
+                                            <button style="background-color:#4e73df; color: white"
+                                                    class="form-control form-control-alternative"> Add Category
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mt-4 mb-4">
+                        <div class="pl-lg-4">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <form action="{% url 'csvCat' %}" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="input-group rounded">
+                                            <div class="custom-file">
+                                                <input type="file" name="csvCat" class="custom-file-input"
+                                                       id="inputGroupFile04">
+                                                <label class="custom-file-label" for="inputGroupFile04">Upload Category CSV</label>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-danger" type="submit">Upload</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group focused">
+                                        {% if filePath %}
+                                            <a href="{% static filePath %}" class="btn btn-success btn-block"
+                                               download><i
+                                                    class="fas fa-download fa-sm text-white-50"></i> Download Category CSV</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.container-fluid -->
+{% endblock body %}
+{% block javascript %}
+    <script>
+        window.setTimeout(function () {
+            $(".alert").fadeTo(500, 0).slideUp(500, function () {
+                $(this).remove();
+            });
+        }, 2000);
+    </script>
+
+    <script type="text/javascript">
+
+        $('.custom-file input').change(function (e) {
+            var files = [];
+            for (var i = 0; i < $(this)[0].files.length; i++) {
+                files.push($(this)[0].files[i].name);
+            }
+            $(this).next('.custom-file-label').html(files.join(', '));
+        });
+
+    </script>
+{% endblock javascript %}
+
+</html>

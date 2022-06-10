@@ -1,0 +1,1 @@
+Categories = ['Alcatel', 'Nokia', 'Samsung', 'iPad', 'iphone']

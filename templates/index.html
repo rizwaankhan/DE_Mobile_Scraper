@@ -1,0 +1,179 @@
+{% extends 'BaseTemplate.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block title %}
+        <title>Home</title>
+    {% endblock title %}
+</head>
+{% block body %}
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0  display-4 text-primary">Price Checker</h1>
+            {#            {% if csvPath %}#}
+            {#                <a href="{% static csvPath %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i#}
+            {#                        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>#}
+            {% if file %}
+                <a class="hideme btn btn-sm btn-primary shadow-sm" href="{% static file %}"
+                ><i
+                        class="fas fa-download fa-sm text-white-50"></i> Download Last Generated CSV </a>
+            {% elif file == '' %}
+                <a href="#" id="lstaIDm2" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm disabled"><i
+                        class=" fa-sm text-white-50"></i>File Not found </a>
+            {% endif %}
+
+            <button class="btn btn-primary" type="button" id="spinnerBtn" style="display: none;" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Please Wait...
+            </button>
+
+        </div>
+        <!-- Content Row -->
+        <div class="row">
+
+            <div class="col-xl-12 col-lg-12">
+                <div class="card shadow mb-4">{% include 'message.html' %}
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+
+                    </div>
+                    <!-- Card Body -->
+                    <form id='my_form' action="{% url 'home' %}" method="post" enctype="multipart/form-data">
+                        <div class="dropdown no-arrow card-body">
+                            <div class="d-sm-flex align-items-center justify-content-between py-3 ">
+                                <select class="form-select form-control" name="catName"
+                                        aria-label="Disabled select example">
+                                    <option selected DISABLED>Select Category</option>
+                                    {% for cat in categories %}
+                                        <option value="{{ cat }}">{{ cat }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <h6 class="m-0 font-weight-bold text-primary container-fluid">Add Urls :</h6>
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-outline">
+                            <textarea class="form-control" name="urls" id="textAreaExample1" rows="8"
+                                      cols="12"></textarea>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-3 pb-2">
+                                    <button id='button' type="submit" class="btn btn-primary btn-block"
+                                            disabled="disabled">
+                                        Start
+                                    </button>
+                                </div>
+                                <div class="col-md-1 pt-3 ">
+                                </div>
+                                <div class="col-md-3 pb-2">
+                                    <a hidden href="#" class="btn btn-danger btn-block">Stop</a>
+                                </div>
+                                <div class="col-md-1 pt-3 ">
+
+                                </div>
+                                <div class="col-md-4 pb-2">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6 class="m-0 font-weight-bold text-primary container-fluid pb-3">Parse Urls With CSV:</h6>
+                        <div class="container">
+                            <div class="input-group mb-3">
+                                <div class="custom-file">
+                                    <input type="file" name="file" class="custom-file-input" id="inputGroupFile02"/>
+                                    <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                                </div>
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" id="uploadID">Upload</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="pb-3 pt-3">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+{% endblock body %}
+{% block javascript %}
+    <script>
+        window.setTimeout(function () {
+            $(".alert").fadeTo(500, 0).slideUp(500, function () {
+                $(this).remove();
+            });
+        }, 2000);
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#button').prop('disabled', true);
+
+            function validateNextButton() {
+                var buttonDisabled = $('#textAreaExample1').val().trim() === '';
+                $('#button').prop('disabled', buttonDisabled);
+            }
+
+            $('#textAreaExample1').on('keyup', validateNextButton);
+        });
+    </script>
+
+
+    <script type="text/javascript">
+
+        $('.custom-file input').change(function (e) {
+            var files = [];
+            for (var i = 0; i < $(this)[0].files.length; i++) {
+                files.push($(this)[0].files[i].name);
+            }
+            $(this).next('.custom-file-label').html(files.join(', '));
+        });
+
+    </script>
+    <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+    <script>
+
+        document.getElementById('button').addEventListener('click', () => {
+
+            document.getElementById("spinnerBtn").style.display = "block";
+            document.getElementsByTagName('body')[0].scrollIntoView({behavior: "smooth"});
+        })
+        document.getElementById('uploadID').addEventListener('click', () => {
+
+            document.getElementById("spinnerBtn").style.display = "block";
+            document.getElementsByTagName('body')[0].scrollIntoView({behavior: "smooth"});
+
+        })
+
+    </script>
+
+    <script>
+        const btn = document.getElementById('button');
+
+
+        btn.addEventListener('click', () => {
+            const bton = document.getElementsByClassName('hideme')[0];
+            bton.style.display = 'none';
+        });
+    </script>
+
+    <script>
+        const btn = document.getElementById('uploadID');
+        btn.addEventListener('click', () => {
+            const bton = document.getElementsByClassName('hideme')[0];
+            bton.style.display = 'none';
+        });
+    </script>
+{% endblock javascript %}
+
+</html>
